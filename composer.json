@@ -1,0 +1,22 @@
+{
+    "name": "tp-bloomland/user-activity-client",
+    "description": "PHP client for the User Activity Summary API",
+    "type": "library",
+    "require": {
+        "php": ">=7.4",
+        "guzzlehttp/guzzle": "^7.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "TpBloomland\\UserActivity\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TpBloomland\\UserActivity\\Tests\\": "tests/"
+        }
+    }
+}

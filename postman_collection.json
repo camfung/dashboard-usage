@@ -1,0 +1,299 @@
+{
+  "info": {
+    "name": "User Activity Summary API",
+    "description": "API collection for User Activity Summary endpoints with aggregated daily user activity data including hit counts, costs, and running balance calculations.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.1.0"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://ce7jzbocq1.execute-api.ca-central-1.amazonaws.com/dev",
+      "type": "string"
+    },
+    {
+      "key": "test_user_id",
+      "value": "125",
+      "type": "string"
+    },
+    {
+      "key": "empty_user_id",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "start_date",
+      "value": "2025-08-01",
+      "type": "string"
+    },
+    {
+      "key": "end_date",
+      "value": "2025-08-31",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "User Activity Summary",
+      "item": [
+        {
+          "name": "Get Activity - Basic Request",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/user-activity-summary/{{test_user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["user-activity-summary", "{{test_user_id}}"]
+            },
+            "description": "Retrieves all daily aggregated activity data for user 125 (test user with data). Returns date, totalHits, hitCost, and running balance for each day."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Activity - With Date Range",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/user-activity-summary/{{test_user_id}}?start_date={{start_date}}&end_date={{end_date}}",
+              "host": ["{{base_url}}"],
+              "path": ["user-activity-summary", "{{test_user_id}}"],
+              "query": [
+                {
+                  "key": "start_date",
+                  "value": "{{start_date}}",
+                  "description": "Filter from this date (YYYY-MM-DD)"
+                },
+                {
+                  "key": "end_date",
+                  "value": "{{end_date}}",
+                  "description": "Filter to this date (YYYY-MM-DD)"
+                }
+              ]
+            },
+            "description": "Retrieves activity data for a specific date range. Uses start_date and end_date parameters to filter results. Default range is August 2025."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Activity - Start Date Only",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/user-activity-summary/{{test_user_id}}?start_date={{start_date}}",
+              "host": ["{{base_url}}"],
+              "path": ["user-activity-summary", "{{test_user_id}}"],
+              "query": [
+                {
+                  "key": "start_date",
+                  "value": "{{start_date}}",
+                  "description": "Get all activity from this date onwards"
+                }
+              ]
+            },
+            "description": "Retrieves all activity from the specified start date onwards. Returns all records from August 1st, 2025 to the latest available date."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Activity - End Date Only",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/user-activity-summary/{{test_user_id}}?end_date=2025-07-31",
+              "host": ["{{base_url}}"],
+              "path": ["user-activity-summary", "{{test_user_id}}"],
+              "query": [
+                {
+                  "key": "end_date",
+                  "value": "2025-07-31",
+                  "description": "Get all activity up to this date"
+                }
+              ]
+            },
+            "description": "Retrieves all activity up to and including the specified end date. Returns all records up to July 31st, 2025."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Activity - Empty User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/user-activity-summary/{{empty_user_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["user-activity-summary", "{{empty_user_id}}"]
+            },
+            "description": "Tests the API with a user that has no activity data (UID 1). Should return success=true with an empty source array."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Activity - Missing UID (Error)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/user-activity-summary/",
+              "host": ["{{base_url}}"],
+              "path": ["user-activity-summary", ""]
+            },
+            "description": "Tests error handling when user ID is missing from the path. Should return 400 error with message 'Missing user ID'."
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints for retrieving user activity summaries with daily aggregated data including hits, costs, and running balances."
+    },
+    {
+      "name": "Schema Inspector",
+      "item": [
+        {
+          "name": "Describe Table - payment_records",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/schema-inspector/describe/payment_records",
+              "host": ["{{base_url}}"],
+              "path": ["schema-inspector", "describe", "payment_records"]
+            },
+            "description": "Returns the schema structure for the payment_records table including column names, types, and constraints."
+          },
+          "response": []
+        },
+        {
+          "name": "Describe Table - tp_log",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/schema-inspector/describe/tp_log",
+              "host": ["{{base_url}}"],
+              "path": ["schema-inspector", "describe", "tp_log"]
+            },
+            "description": "Returns the schema structure for the tp_log table which stores hit/redirect activity data."
+          },
+          "response": []
+        },
+        {
+          "name": "Describe Table - user_products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/schema-inspector/describe/user_products",
+              "host": ["{{base_url}}"],
+              "path": ["schema-inspector", "describe", "user_products"]
+            },
+            "description": "Returns the schema structure for the user_products table which links users to their products."
+          },
+          "response": []
+        },
+        {
+          "name": "Describe Table - products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/schema-inspector/describe/products",
+              "host": ["{{base_url}}"],
+              "path": ["schema-inspector", "describe", "products"]
+            },
+            "description": "Returns the schema structure for the products table which contains pricing information."
+          },
+          "response": []
+        },
+        {
+          "name": "Sample Data - tp_log",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/schema-inspector/sample/tp_log?limit=5",
+              "host": ["{{base_url}}"],
+              "path": ["schema-inspector", "sample", "tp_log"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "5",
+                  "description": "Number of sample rows to return"
+                }
+              ]
+            },
+            "description": "Returns sample data from the tp_log table. Default limit is 5 rows. Useful for debugging and understanding data structure."
+          },
+          "response": []
+        },
+        {
+          "name": "Sample Data - payment_records",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/schema-inspector/sample/payment_records?limit=5",
+              "host": ["{{base_url}}"],
+              "path": ["schema-inspector", "sample", "payment_records"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "5",
+                  "description": "Number of sample rows to return"
+                }
+              ]
+            },
+            "description": "Returns sample data from the payment_records table. Useful for verifying payment data structure."
+          },
+          "response": []
+        },
+        {
+          "name": "Sample Data - user_products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/schema-inspector/sample/user_products?limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["schema-inspector", "sample", "user_products"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Number of sample rows to return"
+                }
+              ]
+            },
+            "description": "Returns sample data from the user_products table showing user-product associations."
+          },
+          "response": []
+        },
+        {
+          "name": "Sample Data - tp_user",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/schema-inspector/sample/tp_user?limit=5",
+              "host": ["{{base_url}}"],
+              "path": ["schema-inspector", "sample", "tp_user"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "5",
+                  "description": "Number of sample rows to return"
+                }
+              ]
+            },
+            "description": "Returns sample data from the tp_user table containing user information."
+          },
+          "response": []
+        }
+      ],
+      "description": "Debug endpoints for inspecting database schema and sample data. Useful for troubleshooting and understanding data structure."
+    }
+  ]
+}
