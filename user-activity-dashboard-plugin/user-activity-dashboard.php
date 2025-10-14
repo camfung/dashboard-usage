@@ -24,8 +24,10 @@ define('UAD_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('UAD_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('UAD_PLUGIN_FILE', __FILE__);
 
-// Autoload composer dependencies
-require_once __DIR__ . '/../vendor/autoload.php';
+// Autoload composer dependencies from plugin's own vendor directory
+if (file_exists(UAD_PLUGIN_DIR . 'vendor/autoload.php')) {
+    require_once UAD_PLUGIN_DIR . 'vendor/autoload.php';
+}
 
 // Include required files
 require_once UAD_PLUGIN_DIR . 'includes/class-uad-core.php';
@@ -52,9 +54,9 @@ function uad_activate() {
     }
 
     // Check if vendor directory exists
-    if (!file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    if (!file_exists(UAD_PLUGIN_DIR . 'vendor/autoload.php')) {
         deactivate_plugins(plugin_basename(__FILE__));
-        wp_die(__('Please run "composer install" in the dashboard-usage directory before activating this plugin.', 'user-activity-dashboard'));
+        wp_die(__('Please run "composer install" in the user-activity-dashboard-plugin directory before activating this plugin.', 'user-activity-dashboard'));
     }
 }
 register_activation_hook(__FILE__, 'uad_activate');

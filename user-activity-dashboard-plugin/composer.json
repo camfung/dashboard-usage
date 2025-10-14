@@ -1,0 +1,14 @@
+{
+    "name": "tp-bloomland/user-activity-dashboard-plugin",
+    "description": "WordPress plugin for User Activity Dashboard with charts and tables",
+    "type": "wordpress-plugin",
+    "require": {
+        "php": ">=7.4",
+        "guzzlehttp/guzzle": "^7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "TpBloomland\\UserActivity\\": "lib/UserActivity/"
+        }
+    }
+}
