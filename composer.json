@@ -1,7 +1,7 @@
 {
     "name": "tp-bloomland/user-activity-client",
-    "description": "PHP client for the User Activity Summary API",
-    "type": "library",
+    "description": "PHP client for the User Activity Summary API and WordPress Dashboard Plugin",
+    "type": "wordpress-plugin",
     "require": {
         "php": ">=7.4",
         "guzzlehttp/guzzle": "^7.0"
@@ -11,7 +11,7 @@
     },
     "autoload": {
         "psr-4": {
-            "TpBloomland\\UserActivity\\": "src/"
+            "TpBloomland\\UserActivity\\": ["src/", "lib/UserActivity/"]
         }
     },
     "autoload-dev": {
