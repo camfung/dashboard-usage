@@ -281,10 +281,197 @@
         });
     }
 
+    /**
+     * Initialize table pagination
+     */
+    function initPagination() {
+        const table = document.getElementById('uad-activity-table');
+        if (!table) return;
+
+        const tbody = document.getElementById('uad-table-body');
+        const rowsPerPageSelect = document.getElementById('uad-rows-per-page');
+        const pageNumbers = document.getElementById('uad-page-numbers');
+        const firstPageBtn = document.getElementById('uad-first-page');
+        const prevPageBtn = document.getElementById('uad-prev-page');
+        const nextPageBtn = document.getElementById('uad-next-page');
+        const lastPageBtn = document.getElementById('uad-last-page');
+        const showingStart = document.getElementById('uad-showing-start');
+        const showingEnd = document.getElementById('uad-showing-end');
+        const totalEntries = document.getElementById('uad-total-entries');
+
+        if (!tbody || !rowsPerPageSelect) return;
+
+        const allRows = Array.from(tbody.querySelectorAll('.uad-table-row'));
+        const totalRows = allRows.length;
+
+        let currentPage = 1;
+        let rowsPerPage = 10;
+
+        /**
+         * Calculate total pages
+         */
+        function getTotalPages() {
+            return Math.ceil(totalRows / rowsPerPage);
+        }
+
+        /**
+         * Show rows for current page
+         */
+        function showPage(page) {
+            const totalPages = getTotalPages();
+
+            // Validate page number
+            if (page < 1) page = 1;
+            if (page > totalPages) page = totalPages;
+
+            currentPage = page;
+
+            // Calculate row range
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+
+            // Show/hide rows
+            allRows.forEach((row, index) => {
+                if (index >= start && index < end) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Update showing text
+            const showStart = totalRows > 0 ? start + 1 : 0;
+            const showEnd = Math.min(end, totalRows);
+            showingStart.textContent = showStart;
+            showingEnd.textContent = showEnd;
+
+            // Update pagination buttons
+            updatePaginationButtons();
+        }
+
+        /**
+         * Update pagination button states and page numbers
+         */
+        function updatePaginationButtons() {
+            const totalPages = getTotalPages();
+
+            // Update button states
+            firstPageBtn.disabled = currentPage === 1;
+            prevPageBtn.disabled = currentPage === 1;
+            nextPageBtn.disabled = currentPage === totalPages;
+            lastPageBtn.disabled = currentPage === totalPages;
+
+            // Generate page numbers
+            generatePageNumbers(totalPages);
+        }
+
+        /**
+         * Generate page number buttons
+         */
+        function generatePageNumbers(totalPages) {
+            pageNumbers.innerHTML = '';
+
+            if (totalPages <= 1) return;
+
+            // Show max 7 page numbers
+            let startPage = Math.max(1, currentPage - 3);
+            let endPage = Math.min(totalPages, currentPage + 3);
+
+            // Adjust if at beginning or end
+            if (currentPage <= 4) {
+                endPage = Math.min(7, totalPages);
+            }
+            if (currentPage >= totalPages - 3) {
+                startPage = Math.max(1, totalPages - 6);
+            }
+
+            // Add first page + ellipsis if needed
+            if (startPage > 1) {
+                addPageButton(1);
+                if (startPage > 2) {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.className = 'uad-page-ellipsis';
+                    ellipsis.textContent = '...';
+                    pageNumbers.appendChild(ellipsis);
+                }
+            }
+
+            // Add page number buttons
+            for (let i = startPage; i <= endPage; i++) {
+                addPageButton(i);
+            }
+
+            // Add ellipsis + last page if needed
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.className = 'uad-page-ellipsis';
+                    ellipsis.textContent = '...';
+                    pageNumbers.appendChild(ellipsis);
+                }
+                addPageButton(totalPages);
+            }
+        }
+
+        /**
+         * Add a page number button
+         */
+        function addPageButton(pageNum) {
+            const btn = document.createElement('button');
+            btn.className = 'uad-page-num';
+            btn.textContent = pageNum;
+
+            if (pageNum === currentPage) {
+                btn.classList.add('active');
+            }
+
+            btn.addEventListener('click', function() {
+                showPage(pageNum);
+            });
+
+            pageNumbers.appendChild(btn);
+        }
+
+        /**
+         * Event listeners
+         */
+
+        // Rows per page change
+        rowsPerPageSelect.addEventListener('change', function() {
+            rowsPerPage = parseInt(this.value);
+            currentPage = 1; // Reset to first page
+            showPage(1);
+        });
+
+        // First page
+        firstPageBtn.addEventListener('click', function() {
+            showPage(1);
+        });
+
+        // Previous page
+        prevPageBtn.addEventListener('click', function() {
+            showPage(currentPage - 1);
+        });
+
+        // Next page
+        nextPageBtn.addEventListener('click', function() {
+            showPage(currentPage + 1);
+        });
+
+        // Last page
+        lastPageBtn.addEventListener('click', function() {
+            showPage(getTotalPages());
+        });
+
+        // Initialize first page
+        showPage(1);
+    }
+
     // Initialize when DOM is ready
     function init() {
         initChart();
         initDatePicker();
+        initPagination();
     }
 
     if (document.readyState === 'loading') {
