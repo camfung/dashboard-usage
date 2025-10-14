@@ -238,12 +238,23 @@
 
 .uad-table thead th {
     padding: 14px 12px;
-    text-align: left;
+    text-align: center;
     font-weight: 600;
     text-transform: uppercase;
     font-size: 12px;
     letter-spacing: 0.5px;
     border-bottom: 2px solid var(--selective-yellow);
+}
+
+/* Add vertical separator lines */
+.uad-table thead th:nth-child(4),
+.uad-table tbody td:nth-child(4) {
+    border-right: 2px solid var(--bleu-de-france);
+}
+
+.uad-table thead th:nth-child(7),
+.uad-table tbody td:nth-child(7) {
+    border-right: 2px solid var(--bleu-de-france);
 }
 
 .uad-table tbody tr {
@@ -262,19 +273,21 @@
 .uad-table tbody td {
     padding: 12px;
     color: var(--jet);
+    text-align: center;
 }
 
 /* Table Cell Alignments */
 .uad-table .uad-date {
     font-weight: 500;
     color: var(--bleu-de-france);
+    text-align: center;
 }
 
 .uad-table .uad-hits,
 .uad-table .uad-cost,
 .uad-table .uad-total,
 .uad-table .uad-balance {
-    text-align: right;
+    text-align: center;
     font-variant-numeric: tabular-nums;
 }
 
