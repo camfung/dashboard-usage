@@ -12,11 +12,29 @@ $activities = $data['activities'];
 $summary = $data['summary'];
 ?>
 
-<div class="uad-dashboard" data-user-id="<?php echo esc_attr($user_id); ?>">
+<div class="uad-dashboard"
+     data-user-id="<?php echo esc_attr($user_id); ?>"
+     data-start-date="<?php echo esc_attr($data['start_date']); ?>"
+     data-end-date="<?php echo esc_attr($data['end_date']); ?>"
+     data-ajax-url="<?php echo admin_url('admin-ajax.php'); ?>"
+     data-nonce="<?php echo wp_create_nonce('uad_load_data'); ?>">
 
     <!-- Dashboard Header -->
     <div class="uad-header">
         <h2 class="uad-title">Activity Dashboard</h2>
+
+        <!-- Date Range Picker -->
+        <div class="uad-date-picker">
+            <label for="uad-start-date">Start Date:</label>
+            <input type="date" id="uad-start-date" class="uad-date-input" value="<?php echo esc_attr($data['start_date']); ?>">
+
+            <label for="uad-end-date">End Date:</label>
+            <input type="date" id="uad-end-date" class="uad-date-input" value="<?php echo esc_attr($data['end_date']); ?>">
+
+            <button id="uad-update-dates" class="uad-button">Update</button>
+            <button id="uad-reset-dates" class="uad-button uad-button-secondary">Reset</button>
+        </div>
+
         <div class="uad-summary">
             <div class="uad-summary-item">
                 <span class="uad-summary-label">Total Days:</span>

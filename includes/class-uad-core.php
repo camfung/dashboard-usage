@@ -62,9 +62,19 @@ class UAD_Core {
 
     /**
      * Get default user ID (can be filtered)
+     *
+     * Returns the current WordPress user ID if logged in,
+     * otherwise falls back to a default ID (125)
      */
     public function get_default_user_id() {
-        return apply_filters('uad_default_user_id', 125);
+        // Get current WordPress user ID
+        $current_user_id = get_current_user_id();
+
+        // Use current user if logged in, otherwise use default
+        $default_user_id = $current_user_id > 0 ? $current_user_id : 125;
+
+        // Allow filtering for customization
+        return apply_filters('uad_default_user_id', $default_user_id);
     }
 
     /**

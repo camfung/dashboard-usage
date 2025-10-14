@@ -84,6 +84,109 @@
     color: var(--selective-yellow);
 }
 
+/* Date Picker */
+.uad-date-picker {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 16px 0;
+    padding: 16px;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(45, 45, 42, 0.1);
+}
+
+.uad-date-picker label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--jet);
+    margin: 0;
+}
+
+.uad-date-input {
+    padding: 8px 12px;
+    border: 2px solid var(--bleu-de-france);
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--jet);
+    background: var(--baby-powder);
+    transition: all 0.2s ease;
+    min-width: 150px;
+}
+
+.uad-date-input:hover {
+    border-color: var(--selective-yellow);
+}
+
+.uad-date-input:focus {
+    outline: none;
+    border-color: var(--selective-yellow);
+    box-shadow: 0 0 0 3px rgba(255, 179, 15, 0.2);
+}
+
+.uad-button {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: var(--bleu-de-france);
+    color: var(--baby-powder);
+}
+
+.uad-button:hover {
+    background: var(--selective-yellow);
+    color: var(--jet);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.uad-button:active {
+    transform: translateY(0);
+}
+
+.uad-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.uad-button-secondary {
+    background: white;
+    color: var(--jet);
+    border: 2px solid var(--jet);
+}
+
+.uad-button-secondary:hover {
+    background: var(--jet);
+    color: var(--baby-powder);
+    border-color: var(--jet);
+}
+
+/* Loading State */
+.uad-dashboard.uad-loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.uad-dashboard.uad-loading::after {
+    content: 'Loading...';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--jet);
+    color: var(--baby-powder);
+    padding: 16px 32px;
+    border-radius: 8px;
+    font-weight: 600;
+    z-index: 1000;
+}
+
 /* Section Titles */
 .uad-section-title {
     color: var(--jet);
@@ -235,6 +338,16 @@
 @media screen and (max-width: 768px) {
     .uad-dashboard {
         padding: 16px;
+    }
+
+    .uad-date-picker {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .uad-date-input,
+    .uad-button {
+        width: 100%;
     }
 
     .uad-summary {

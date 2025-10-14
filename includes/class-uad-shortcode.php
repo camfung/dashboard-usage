@@ -51,9 +51,26 @@ class UAD_Shortcode {
         $show_chart = filter_var($atts['show_chart'], FILTER_VALIDATE_BOOLEAN);
         $show_table = filter_var($atts['show_table'], FILTER_VALIDATE_BOOLEAN);
 
-        // Calculate date range
-        $end_date = current_time('Y-m-d');
-        $start_date = date('Y-m-d', strtotime("-{$days} days"));
+        // Check for URL parameters to override dates
+        $url_start_date = isset($_GET['uad_start_date']) ? sanitize_text_field($_GET['uad_start_date']) : null;
+        $url_end_date = isset($_GET['uad_end_date']) ? sanitize_text_field($_GET['uad_end_date']) : null;
+
+        // Calculate date range (URL parameters take priority)
+        if ($url_start_date && $url_end_date) {
+            // Validate date format
+            if ($this->is_valid_date($url_start_date) && $this->is_valid_date($url_end_date)) {
+                $start_date = $url_start_date;
+                $end_date = $url_end_date;
+            } else {
+                // Invalid dates, use default
+                $end_date = current_time('Y-m-d');
+                $start_date = date('Y-m-d', strtotime("-{$days} days"));
+            }
+        } else {
+            // Use default date range based on 'days' attribute
+            $end_date = current_time('Y-m-d');
+            $start_date = date('Y-m-d', strtotime("-{$days} days"));
+        }
 
         // Fetch data
         $data = $this->fetch_activity_data($user_id, $start_date, $end_date);
@@ -138,5 +155,16 @@ class UAD_Shortcode {
             '<div class="uad-error"><p>%s</p></div>',
             esc_html($message)
         );
+    }
+
+    /**
+     * Validate date format (Y-m-d)
+     *
+     * @param string $date Date string
+     * @return bool
+     */
+    private function is_valid_date($date) {
+        $d = DateTime::createFromFormat('Y-m-d', $date);
+        return $d && $d->format('Y-m-d') === $date;
     }
 }

@@ -209,11 +209,88 @@
         });
     }
 
+    /**
+     * Initialize date picker functionality
+     */
+    function initDatePicker() {
+        const dashboard = document.querySelector('.uad-dashboard');
+        if (!dashboard) return;
+
+        const startDateInput = document.getElementById('uad-start-date');
+        const endDateInput = document.getElementById('uad-end-date');
+        const updateButton = document.getElementById('uad-update-dates');
+        const resetButton = document.getElementById('uad-reset-dates');
+
+        if (!startDateInput || !endDateInput || !updateButton) return;
+
+        // Store original dates for reset
+        const originalStartDate = dashboard.dataset.startDate;
+        const originalEndDate = dashboard.dataset.endDate;
+
+        // Update button click
+        updateButton.addEventListener('click', function() {
+            const startDate = startDateInput.value;
+            const endDate = endDateInput.value;
+
+            if (!startDate || !endDate) {
+                alert('Please select both start and end dates');
+                return;
+            }
+
+            if (startDate > endDate) {
+                alert('Start date must be before end date');
+                return;
+            }
+
+            // Show loading state
+            updateButton.disabled = true;
+            updateButton.textContent = 'Loading...';
+            dashboard.classList.add('uad-loading');
+
+            // Reload page with new date parameters
+            const url = new URL(window.location.href);
+            url.searchParams.set('uad_start_date', startDate);
+            url.searchParams.set('uad_end_date', endDate);
+            window.location.href = url.toString();
+        });
+
+        // Reset button click
+        if (resetButton) {
+            resetButton.addEventListener('click', function() {
+                // Remove date parameters from URL
+                const url = new URL(window.location.href);
+                url.searchParams.delete('uad_start_date');
+                url.searchParams.delete('uad_end_date');
+                window.location.href = url.toString();
+            });
+        }
+
+        // Set max date for both inputs (today)
+        const today = new Date().toISOString().split('T')[0];
+        startDateInput.max = today;
+        endDateInput.max = today;
+
+        // Update end date min when start date changes
+        startDateInput.addEventListener('change', function() {
+            endDateInput.min = this.value;
+        });
+
+        // Update start date max when end date changes
+        endDateInput.addEventListener('change', function() {
+            startDateInput.max = this.value;
+        });
+    }
+
     // Initialize when DOM is ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initChart);
-    } else {
+    function init() {
         initChart();
+        initDatePicker();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
     }
 
 })();
