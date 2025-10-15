@@ -7,10 +7,10 @@
 
     // Color palette
     const colors = {
-        babyPowder: '#FFFFFA',
+        babyPowder: '#F8F9FA',
         bleuDeFrance: '#3083DC',
         jet: '#2D2D2A',
-        selectiveYellow: '#FFB30F',
+        selectiveYellow: '#FF6B6B',
         poppy: '#DF2935'
     };
 

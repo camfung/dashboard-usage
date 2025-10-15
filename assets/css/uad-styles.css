@@ -1,18 +1,18 @@
 /**
  * User Activity Dashboard Styles
  * Color Palette:
- * - Baby Powder: #FFFFFA
+ * - Background: #F8F9FA
  * - Bleu de France: #3083DC
  * - Jet: #2D2D2A
- * - Selective Yellow: #FFB30F
+ * - Coral: #FF6B6B
  * - Poppy: #DF2935
  */
 
 :root {
-    --baby-powder: #FFFFFA;
+    --baby-powder: #F8F9FA;
     --bleu-de-france: #3083DC;
     --jet: #2D2D2A;
-    --selective-yellow: #FFB30F;
+    --selective-yellow: #FF6B6B;
     --poppy: #DF2935;
 }
 
@@ -194,7 +194,7 @@
     font-weight: 600;
     margin: 32px 0 16px 0;
     padding-left: 12px;
-    border-left: 4px solid var(--selective-yellow);
+    border-left: 4px solid var(--bleu-de-france);
 }
 
 /* Chart Container */
@@ -232,8 +232,8 @@
 }
 
 .uad-table thead {
-    background: linear-gradient(135deg, var(--jet), #3a3a36);
-    color: var(--baby-powder);
+    background: linear-gradient(135deg, #4A5568, #2D3748);
+    color: white;
 }
 
 .uad-table thead th {
@@ -243,7 +243,7 @@
     text-transform: uppercase;
     font-size: 12px;
     letter-spacing: 0.5px;
-    border-bottom: 2px solid var(--selective-yellow);
+    border-bottom: 2px solid var(--bleu-de-france);
 }
 
 /* Add vertical separator lines */
