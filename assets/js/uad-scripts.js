@@ -108,7 +108,7 @@
                 scales: {
                     x: {
                         grid: {
-                            color: colors.jet,
+                            color: colors.jet + '26',
                             drawBorder: false
                         },
                         ticks: {
@@ -124,7 +124,7 @@
                         type: 'linear',
                         position: 'left',
                         grid: {
-                            color: colors.jet,
+                            color: colors.jet + '26',
                             drawBorder: false
                         },
                         ticks: {
