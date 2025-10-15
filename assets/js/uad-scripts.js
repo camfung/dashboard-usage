@@ -38,10 +38,6 @@
         hitsGradient.addColorStop(0, colors.selectiveYellow + 'CC'); // 80% opacity
         hitsGradient.addColorStop(1, colors.selectiveYellow + '33'); // 20% opacity
 
-        const balanceGradient = ctx.createLinearGradient(0, 0, 0, 400);
-        balanceGradient.addColorStop(0, colors.bleuDeFrance + 'CC');
-        balanceGradient.addColorStop(1, colors.bleuDeFrance + '33');
-
         // Create chart
         new Chart(ctx, {
             type: 'line',
@@ -60,21 +56,6 @@
                         pointRadius: 4,
                         pointHoverRadius: 6,
                         pointBackgroundColor: colors.selectiveYellow,
-                        pointBorderColor: colors.babyPowder,
-                        pointBorderWidth: 2
-                    },
-                    {
-                        label: 'Balance',
-                        data: chartData.balance,
-                        borderColor: colors.bleuDeFrance,
-                        backgroundColor: balanceGradient,
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.4,
-                        yAxisID: 'y-balance',
-                        pointRadius: 4,
-                        pointHoverRadius: 6,
-                        pointBackgroundColor: colors.bleuDeFrance,
                         pointBorderColor: colors.babyPowder,
                         pointBorderWidth: 2
                     }
@@ -117,16 +98,8 @@
                                 if (label) {
                                     label += ': ';
                                 }
-                                if (context.datasetIndex === 0) {
-                                    // Hits - no dollar sign
-                                    label += context.parsed.y.toLocaleString();
-                                } else {
-                                    // Balance - with dollar sign
-                                    label += '$' + context.parsed.y.toLocaleString('en-US', {
-                                        minimumFractionDigits: 2,
-                                        maximumFractionDigits: 2
-                                    });
-                                }
+                                // Hits - no dollar sign
+                                label += context.parsed.y.toLocaleString();
                                 return label;
                             }
                         }
@@ -135,7 +108,7 @@
                 scales: {
                     x: {
                         grid: {
-                            color: colors.jet + '15',
+                            color: colors.jet,
                             drawBorder: false
                         },
                         ticks: {
@@ -151,7 +124,7 @@
                         type: 'linear',
                         position: 'left',
                         grid: {
-                            color: colors.jet + '15',
+                            color: colors.jet,
                             drawBorder: false
                         },
                         ticks: {
@@ -168,36 +141,6 @@
                             display: true,
                             text: 'Hits',
                             color: colors.selectiveYellow,
-                            font: {
-                                size: 12,
-                                weight: 'bold'
-                            }
-                        }
-                    },
-                    'y-balance': {
-                        type: 'linear',
-                        position: 'right',
-                        grid: {
-                            drawOnChartArea: false,
-                            drawBorder: false
-                        },
-                        ticks: {
-                            color: colors.bleuDeFrance,
-                            font: {
-                                size: 11,
-                                weight: '500'
-                            },
-                            callback: function(value) {
-                                return '$' + value.toLocaleString('en-US', {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2
-                                });
-                            }
-                        },
-                        title: {
-                            display: true,
-                            text: 'Balance',
-                            color: colors.bleuDeFrance,
                             font: {
                                 size: 12,
                                 weight: 'bold'
