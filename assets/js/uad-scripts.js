@@ -5,14 +5,17 @@
 (function() {
     'use strict';
 
-    // Color palette
-    const colors = {
+    // Color palette (can be dynamically changed)
+    let colors = {
         babyPowder: '#F8F9FA',
         bleuDeFrance: '#3083DC',
         jet: '#2D2D2A',
         selectiveYellow: '#FF6B6B',
         poppy: '#DF2935'
     };
+
+    // Store reference to chart instance
+    let chartInstance = null;
 
     /**
      * Initialize chart when DOM is ready
@@ -38,8 +41,13 @@
         hitsGradient.addColorStop(0, colors.selectiveYellow + 'CC'); // 80% opacity
         hitsGradient.addColorStop(1, colors.selectiveYellow + '33'); // 20% opacity
 
+        // Destroy existing chart if it exists
+        if (chartInstance) {
+            chartInstance.destroy();
+        }
+
         // Create chart
-        new Chart(ctx, {
+        chartInstance = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: chartData.labels,
@@ -409,11 +417,258 @@
         showPage(1);
     }
 
+    /**
+     * Color Randomizer - For testing different color schemes
+     */
+    function initColorRandomizer() {
+        // Create color tester container
+        const testerContainer = document.createElement('div');
+        testerContainer.id = 'uad-color-tester';
+        testerContainer.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border: 2px solid #3083DC;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 10000;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        `;
+
+        testerContainer.innerHTML = `
+            <div style="margin-bottom: 12px; font-weight: 600; color: #2D2D2A;">Color Tester</div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <button id="uad-randomize-colors" style="
+                    padding: 10px 16px;
+                    background: #3083DC;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-weight: 600;
+                    font-size: 14px;
+                ">🎲 Randomize Colors</button>
+                <button id="uad-export-colors" style="
+                    padding: 10px 16px;
+                    background: #28a745;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-weight: 600;
+                    font-size: 14px;
+                ">💾 Export Colors</button>
+                <button id="uad-close-tester" style="
+                    padding: 6px 12px;
+                    background: #dc3545;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-weight: 500;
+                    font-size: 12px;
+                ">Close</button>
+            </div>
+            <div id="uad-current-colors" style="
+                margin-top: 12px;
+                padding: 8px;
+                background: #f8f9fa;
+                border-radius: 4px;
+                font-size: 11px;
+                font-family: monospace;
+                max-height: 150px;
+                overflow-y: auto;
+            "></div>
+        `;
+
+        document.body.appendChild(testerContainer);
+
+        // Display current colors
+        updateColorDisplay();
+
+        // Randomize button
+        document.getElementById('uad-randomize-colors').addEventListener('click', randomizeColors);
+
+        // Export button
+        document.getElementById('uad-export-colors').addEventListener('click', exportColors);
+
+        // Close button
+        document.getElementById('uad-close-tester').addEventListener('click', function() {
+            testerContainer.remove();
+        });
+    }
+
+    /**
+     * Generate random hex color
+     */
+    function randomColor() {
+        const hue = Math.floor(Math.random() * 360);
+        const saturation = 60 + Math.floor(Math.random() * 30); // 60-90%
+        const lightness = 50 + Math.floor(Math.random() * 20); // 50-70%
+
+        return hslToHex(hue, saturation, lightness);
+    }
+
+    /**
+     * Generate light background color
+     */
+    function randomLightColor() {
+        const hue = Math.floor(Math.random() * 360);
+        const saturation = 10 + Math.floor(Math.random() * 20); // 10-30%
+        const lightness = 92 + Math.floor(Math.random() * 6); // 92-98%
+
+        return hslToHex(hue, saturation, lightness);
+    }
+
+    /**
+     * Convert HSL to Hex
+     */
+    function hslToHex(h, s, l) {
+        s /= 100;
+        l /= 100;
+        const c = (1 - Math.abs(2 * l - 1)) * s;
+        const x = c * (1 - Math.abs((h / 60) % 2 - 1));
+        const m = l - c / 2;
+        let r = 0, g = 0, b = 0;
+
+        if (0 <= h && h < 60) {
+            r = c; g = x; b = 0;
+        } else if (60 <= h && h < 120) {
+            r = x; g = c; b = 0;
+        } else if (120 <= h && h < 180) {
+            r = 0; g = c; b = x;
+        } else if (180 <= h && h < 240) {
+            r = 0; g = x; b = c;
+        } else if (240 <= h && h < 300) {
+            r = x; g = 0; b = c;
+        } else if (300 <= h && h < 360) {
+            r = c; g = 0; b = x;
+        }
+
+        const toHex = (val) => {
+            const hex = Math.round((val + m) * 255).toString(16);
+            return hex.length === 1 ? '0' + hex : hex;
+        };
+
+        return '#' + toHex(r) + toHex(g) + toHex(b);
+    }
+
+    /**
+     * Randomize colors
+     */
+    function randomizeColors() {
+        // Randomize the colors we changed
+        colors.babyPowder = randomLightColor();
+        colors.selectiveYellow = randomColor();
+
+        // Update CSS variables
+        document.documentElement.style.setProperty('--baby-powder', colors.babyPowder);
+        document.documentElement.style.setProperty('--selective-yellow', colors.selectiveYellow);
+
+        // Update table header gradient
+        const tableHeader = document.querySelector('.uad-table thead');
+        if (tableHeader) {
+            const color1 = randomColor();
+            const color2 = randomColor();
+            tableHeader.style.background = `linear-gradient(135deg, ${color1}, ${color2})`;
+        }
+
+        // Reinitialize chart with new colors
+        initChart();
+
+        // Update color display
+        updateColorDisplay();
+    }
+
+    /**
+     * Update color display
+     */
+    function updateColorDisplay() {
+        const display = document.getElementById('uad-current-colors');
+        if (display) {
+            const tableHeader = document.querySelector('.uad-table thead');
+            const gradient = tableHeader ? window.getComputedStyle(tableHeader).background : 'N/A';
+
+            display.innerHTML = `
+                <div><strong>Background:</strong><br>${colors.babyPowder}</div>
+                <div style="margin-top: 4px;"><strong>Accent:</strong><br>${colors.selectiveYellow}</div>
+                <div style="margin-top: 4px;"><strong>Table Header:</strong><br>${gradient.includes('gradient') ? gradient.substring(0, 50) + '...' : gradient}</div>
+            `;
+        }
+    }
+
+    /**
+     * Export colors to a downloadable file
+     */
+    function exportColors() {
+        const tableHeader = document.querySelector('.uad-table thead');
+        const gradient = tableHeader ? window.getComputedStyle(tableHeader).background : '';
+
+        // Extract gradient colors if possible
+        const gradientMatch = gradient.match(/rgb\([^)]+\)/g);
+        const gradientColors = gradientMatch ? gradientMatch.map(rgb => rgbToHex(rgb)) : [];
+
+        const colorData = {
+            timestamp: new Date().toISOString(),
+            colors: {
+                background: colors.babyPowder,
+                accent: colors.selectiveYellow,
+                blue: colors.bleuDeFrance,
+                jet: colors.jet,
+                poppy: colors.poppy
+            },
+            tableHeaderGradient: gradientColors.length >= 2 ? {
+                color1: gradientColors[0],
+                color2: gradientColors[1]
+            } : null,
+            css: {
+                '--baby-powder': colors.babyPowder,
+                '--bleu-de-france': colors.bleuDeFrance,
+                '--jet': colors.jet,
+                '--selective-yellow': colors.selectiveYellow,
+                '--poppy': colors.poppy
+            }
+        };
+
+        // Create blob and download
+        const blob = new Blob([JSON.stringify(colorData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `uad-colors-${Date.now()}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        alert('Colors exported successfully!');
+    }
+
+    /**
+     * Convert RGB to Hex
+     */
+    function rgbToHex(rgb) {
+        const values = rgb.match(/\d+/g);
+        if (!values || values.length < 3) return '#000000';
+
+        const r = parseInt(values[0]);
+        const g = parseInt(values[1]);
+        const b = parseInt(values[2]);
+
+        return '#' + [r, g, b].map(x => {
+            const hex = x.toString(16);
+            return hex.length === 1 ? '0' + hex : hex;
+        }).join('');
+    }
+
     // Initialize when DOM is ready
     function init() {
         initChart();
         initDatePicker();
         initPagination();
+        initColorRandomizer();
     }
 
     if (document.readyState === 'loading') {
