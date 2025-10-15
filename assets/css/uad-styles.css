@@ -4,7 +4,8 @@
  * - Background: #F8F9FA
  * - Bleu de France: #3083DC
  * - Jet: #2D2D2A
- * - Coral: #FF6B6B
+ * - Teal: #2DD4BF
+ * - Steel: #6B7280
  * - Poppy: #DF2935
  */
 
@@ -12,7 +13,8 @@
     --baby-powder: #F8F9FA;
     --bleu-de-france: #3083DC;
     --jet: #2D2D2A;
-    --selective-yellow: #FF6B6B;
+    --selective-yellow: #2DD4BF;
+    --steel: #6B7280;
     --poppy: #DF2935;
 }
 
@@ -232,7 +234,7 @@
 }
 
 .uad-table thead {
-    background: linear-gradient(135deg, #4A5568, #2D3748);
+    background: var(--steel);
     color: white;
 }
 
