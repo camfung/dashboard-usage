@@ -10,7 +10,8 @@
         babyPowder: '#F8F9FA',
         bleuDeFrance: '#3083DC',
         jet: '#2D2D2A',
-        selectiveYellow: '#FF6B6B',
+        selectiveYellow: '#2DD4BF',
+        steel: '#6B7280',
         poppy: '#DF2935'
     };
 
