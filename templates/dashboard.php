@@ -185,7 +185,6 @@ $summary = $data['summary'];
             <table class="uad-table uad-link-table" id="uad-link-table" data-total-rows="<?php echo count($link_data['links']); ?>">
                 <thead>
                     <tr>
-                        <th>Link ID</th>
                         <th>Keyword</th>
                         <th>Destination</th>
                         <th>Total Hits</th>
@@ -195,7 +194,6 @@ $summary = $data['summary'];
                 <tbody id="uad-link-table-body">
                     <?php foreach ($link_data['links'] as $index => $link) : ?>
                     <tr class="uad-table-row" data-row-index="<?php echo $index; ?>">
-                        <td class="uad-link-id"><?php echo esc_html($link['mid']); ?></td>
                         <td class="uad-keyword">
                             <?php if ($link['keyword'] !== null) : ?>
                                 <code><?php echo esc_html($link['keyword']); ?></code>
