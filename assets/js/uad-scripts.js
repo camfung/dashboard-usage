@@ -36,11 +36,15 @@
 
         const chartData = window.uadChartData;
 
-        // Create gradient for hits area
+        // Create gradients
         const ctx = canvas.getContext('2d');
-        const hitsGradient = ctx.createLinearGradient(0, 0, 0, 400);
-        hitsGradient.addColorStop(0, colors.selectiveYellow + 'CC'); // 80% opacity
-        hitsGradient.addColorStop(1, colors.selectiveYellow + '33'); // 20% opacity
+        const link1Gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        link1Gradient.addColorStop(0, colors.selectiveYellow + 'CC'); // 80% opacity
+        link1Gradient.addColorStop(1, colors.selectiveYellow + '33'); // 20% opacity
+
+        const link2Gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        link2Gradient.addColorStop(0, colors.bleuDeFrance + 'CC'); // 80% opacity
+        link2Gradient.addColorStop(1, colors.bleuDeFrance + '33'); // 20% opacity
 
         // Destroy existing chart if it exists
         if (chartInstance) {
@@ -54,17 +58,32 @@
                 labels: chartData.labels,
                 datasets: [
                     {
-                        label: 'Total Hits',
-                        data: chartData.hits,
+                        label: chartData.topLink1Name || 'Top Link #1',
+                        data: chartData.topLink1,
                         borderColor: colors.selectiveYellow,
-                        backgroundColor: hitsGradient,
-                        borderWidth: 2,
+                        backgroundColor: link1Gradient,
+                        borderWidth: 3,
                         fill: true,
                         tension: 0.4,
                         yAxisID: 'y-hits',
                         pointRadius: 4,
                         pointHoverRadius: 6,
                         pointBackgroundColor: colors.selectiveYellow,
+                        pointBorderColor: colors.babyPowder,
+                        pointBorderWidth: 2
+                    },
+                    {
+                        label: chartData.topLink2Name || 'Top Link #2',
+                        data: chartData.topLink2,
+                        borderColor: colors.bleuDeFrance,
+                        backgroundColor: link2Gradient,
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        yAxisID: 'y-hits',
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        pointBackgroundColor: colors.bleuDeFrance,
                         pointBorderColor: colors.babyPowder,
                         pointBorderWidth: 2
                     }

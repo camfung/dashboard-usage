@@ -248,6 +248,15 @@
     border-bottom: 2px solid var(--bleu-de-france);
 }
 
+.uad-top-link-label {
+    font-size: 10px;
+    font-weight: 400;
+    text-transform: none;
+    opacity: 0.9;
+    font-family: 'Monaco', 'Courier New', monospace;
+    letter-spacing: 0;
+}
+
 /* Add vertical separator lines */
 .uad-table thead th:nth-child(4),
 .uad-table tbody td:nth-child(4) {

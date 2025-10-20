@@ -88,8 +88,18 @@ $summary = $data['summary'];
                 <thead>
                     <tr>
                         <th>Date</th>
-                        <th>NON-SUI</th>
-                        <th>SUI</th>
+                        <th>
+                            Top Link #1
+                            <?php if (!empty($data['top_links']['link1'])) : ?>
+                                <br><small class="uad-top-link-label"><?php echo esc_html($data['top_links']['link1']['keyword'] ?: '(deleted)'); ?></small>
+                            <?php endif; ?>
+                        </th>
+                        <th>
+                            Top Link #2
+                            <?php if (!empty($data['top_links']['link2'])) : ?>
+                                <br><small class="uad-top-link-label"><?php echo esc_html($data['top_links']['link2']['keyword'] ?: '(deleted)'); ?></small>
+                            <?php endif; ?>
+                        </th>
                         <th>Total Hits</th>
                         <th>Cost</th>
                         <th>Other Services</th>
@@ -101,8 +111,8 @@ $summary = $data['summary'];
                     <?php foreach ($activities as $index => $activity) : ?>
                     <tr class="uad-table-row" data-row-index="<?php echo $index; ?>">
                         <td class="uad-date"><?php echo esc_html($activity['date']); ?></td>
-                        <td class="uad-nonsui"><?php echo esc_html($activity['nonSui']); ?></td>
-                        <td class="uad-sui"><?php echo esc_html($activity['sui']); ?></td>
+                        <td class="uad-nonsui"><?php echo number_format($activity['nonSuiHits']); ?></td>
+                        <td class="uad-sui"><?php echo number_format($activity['suiHits']); ?></td>
                         <td class="uad-hits"><?php echo number_format($activity['totalHits']); ?></td>
                         <td class="uad-cost">
                             <?php if ($activity['hitCost'] != 0) : ?>
@@ -247,7 +257,11 @@ $summary = $data['summary'];
     window.uadChartData = {
         labels: <?php echo json_encode(array_column($activities, 'date')); ?>,
         hits: <?php echo json_encode(array_column($activities, 'totalHits')); ?>,
-        balance: <?php echo json_encode(array_column($activities, 'balance')); ?>
+        balance: <?php echo json_encode(array_column($activities, 'balance')); ?>,
+        topLink1: <?php echo json_encode(array_column($activities, 'nonSuiHits')); ?>,
+        topLink2: <?php echo json_encode(array_column($activities, 'suiHits')); ?>,
+        topLink1Name: <?php echo json_encode(!empty($data['top_links']['link1']) ? ($data['top_links']['link1']['keyword'] ?: '(deleted)') : 'N/A'); ?>,
+        topLink2Name: <?php echo json_encode(!empty($data['top_links']['link2']) ? ($data['top_links']['link2']['keyword'] ?: '(deleted)') : 'N/A'); ?>
     };
 </script>
 <?php endif; ?>

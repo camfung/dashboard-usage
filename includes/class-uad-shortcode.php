@@ -72,18 +72,18 @@ class UAD_Shortcode {
             $start_date = date('Y-m-d', strtotime("-{$days} days"));
         }
 
-        // Fetch data
-        $data = $this->fetch_activity_data($user_id, $start_date, $end_date);
-
-        if (is_wp_error($data)) {
-            return $this->render_error($data->get_error_message());
-        }
-
-        // Fetch activity by link data
+        // Fetch activity by link data first (needed for top links)
         $link_data = $this->fetch_activity_by_link_data($user_id, $start_date, $end_date);
 
         if (is_wp_error($link_data)) {
             return $this->render_error($link_data->get_error_message());
+        }
+
+        // Fetch daily activity data and merge with top links
+        $data = $this->fetch_activity_data($user_id, $start_date, $end_date, $link_data);
+
+        if (is_wp_error($data)) {
+            return $this->render_error($data->get_error_message());
         }
 
         // Start output buffering
@@ -101,9 +101,10 @@ class UAD_Shortcode {
      * @param int $user_id User ID
      * @param string $start_date Start date (Y-m-d)
      * @param string $end_date End date (Y-m-d)
+     * @param array $link_data Link data for extracting top links
      * @return array|WP_Error Activity data or error
      */
-    private function fetch_activity_data($user_id, $start_date, $end_date) {
+    private function fetch_activity_data($user_id, $start_date, $end_date, $link_data) {
         try {
             $client = new UserActivityClient();
             $response = $client->getUserActivity($user_id, $start_date, $end_date);
@@ -115,6 +116,13 @@ class UAD_Shortcode {
             // Process data
             $activities = $response['source'];
 
+            // Get top 2 links (already sorted by hits descending from API)
+            $top_links = array_slice($link_data['links'], 0, 2);
+
+            // Extract top link info
+            $top_link_1 = !empty($top_links[0]) ? $top_links[0] : null;
+            $top_link_2 = !empty($top_links[1]) ? $top_links[1] : null;
+
             // Calculate totals
             $total_hits = 0;
             $total_cost = 0;
@@ -123,9 +131,11 @@ class UAD_Shortcode {
                 $total_hits += $record['totalHits'];
                 $total_cost += abs($record['hitCost']);
 
-                // Add placeholders for future fields
-                $record['nonSui'] = '';
-                $record['sui'] = '';
+                // Add top 2 link info to each day
+                $record['nonSui'] = $top_link_1 ? ($top_link_1['keyword'] ?: '(deleted)') : '';
+                $record['sui'] = $top_link_2 ? ($top_link_2['keyword'] ?: '(deleted)') : '';
+                $record['nonSuiHits'] = $top_link_1 ? $top_link_1['totalHits'] : 0;
+                $record['suiHits'] = $top_link_2 ? $top_link_2['totalHits'] : 0;
                 $record['otherServices'] = '';
                 $record['otherServicesTotal'] = '';
             }
@@ -138,6 +148,10 @@ class UAD_Shortcode {
                     'total_cost' => $total_cost,
                     'avg_hits_per_day' => count($activities) > 0 ? $total_hits / count($activities) : 0,
                     'final_balance' => !empty($activities) ? end($activities)['balance'] : 0,
+                ],
+                'top_links' => [
+                    'link1' => $top_link_1,
+                    'link2' => $top_link_2,
                 ],
                 'start_date' => $start_date,
                 'end_date' => $end_date,
