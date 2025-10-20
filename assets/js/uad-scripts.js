@@ -236,19 +236,66 @@
      * Initialize table pagination
      */
     function initPagination() {
-        const table = document.getElementById('uad-activity-table');
+        // Initialize daily activity table pagination
+        initTablePagination(
+            'uad-activity-table',
+            'uad-table-body',
+            'uad-rows-per-page',
+            'uad-page-numbers',
+            'uad-first-page',
+            'uad-prev-page',
+            'uad-next-page',
+            'uad-last-page',
+            'uad-showing-start',
+            'uad-showing-end',
+            'uad-total-entries'
+        );
+
+        // Initialize link activity table pagination
+        initTablePagination(
+            'uad-link-table',
+            'uad-link-table-body',
+            'uad-link-rows-per-page',
+            'uad-link-page-numbers',
+            'uad-link-first-page',
+            'uad-link-prev-page',
+            'uad-link-next-page',
+            'uad-link-last-page',
+            'uad-link-showing-start',
+            'uad-link-showing-end',
+            'uad-link-total-entries'
+        );
+    }
+
+    /**
+     * Initialize pagination for a specific table
+     */
+    function initTablePagination(
+        tableId,
+        tbodyId,
+        rowsPerPageSelectId,
+        pageNumbersId,
+        firstPageBtnId,
+        prevPageBtnId,
+        nextPageBtnId,
+        lastPageBtnId,
+        showingStartId,
+        showingEndId,
+        totalEntriesId
+    ) {
+        const table = document.getElementById(tableId);
         if (!table) return;
 
-        const tbody = document.getElementById('uad-table-body');
-        const rowsPerPageSelect = document.getElementById('uad-rows-per-page');
-        const pageNumbers = document.getElementById('uad-page-numbers');
-        const firstPageBtn = document.getElementById('uad-first-page');
-        const prevPageBtn = document.getElementById('uad-prev-page');
-        const nextPageBtn = document.getElementById('uad-next-page');
-        const lastPageBtn = document.getElementById('uad-last-page');
-        const showingStart = document.getElementById('uad-showing-start');
-        const showingEnd = document.getElementById('uad-showing-end');
-        const totalEntries = document.getElementById('uad-total-entries');
+        const tbody = document.getElementById(tbodyId);
+        const rowsPerPageSelect = document.getElementById(rowsPerPageSelectId);
+        const pageNumbers = document.getElementById(pageNumbersId);
+        const firstPageBtn = document.getElementById(firstPageBtnId);
+        const prevPageBtn = document.getElementById(prevPageBtnId);
+        const nextPageBtn = document.getElementById(nextPageBtnId);
+        const lastPageBtn = document.getElementById(lastPageBtnId);
+        const showingStart = document.getElementById(showingStartId);
+        const showingEnd = document.getElementById(showingEndId);
+        const totalEntries = document.getElementById(totalEntriesId);
 
         if (!tbody || !rowsPerPageSelect) return;
 

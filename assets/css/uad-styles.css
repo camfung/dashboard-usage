@@ -602,3 +602,99 @@
         display: none;
     }
 }
+
+/* Link Table Specific Styles */
+.uad-link-table-container {
+    margin-top: 32px;
+}
+
+.uad-link-summary {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    padding: 12px 16px;
+    background: rgba(48, 131, 220, 0.05);
+    border-radius: 6px;
+    margin-bottom: 16px;
+}
+
+.uad-link-summary-item {
+    font-size: 14px;
+    color: var(--jet);
+}
+
+.uad-link-summary-item strong {
+    color: var(--bleu-de-france);
+    font-size: 18px;
+    margin-right: 4px;
+}
+
+.uad-link-table .uad-link-id {
+    font-weight: 500;
+    color: var(--steel);
+    text-align: center;
+}
+
+.uad-link-table .uad-keyword {
+    text-align: left;
+    font-family: 'Monaco', 'Courier New', monospace;
+}
+
+.uad-link-table .uad-keyword code {
+    background: rgba(45, 213, 191, 0.1);
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 13px;
+    color: var(--selective-yellow);
+    font-weight: 600;
+}
+
+.uad-link-table .uad-destination {
+    text-align: left;
+    max-width: 400px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.uad-destination-link {
+    color: var(--bleu-de-france);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.uad-destination-link:hover {
+    color: var(--selective-yellow);
+    text-decoration: underline;
+}
+
+.uad-deleted-link {
+    color: var(--steel);
+    font-style: italic;
+    opacity: 0.6;
+}
+
+@media screen and (max-width: 768px) {
+    .uad-link-summary {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .uad-link-table .uad-destination {
+        max-width: 200px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .uad-link-table .uad-keyword code {
+        font-size: 11px;
+        padding: 2px 6px;
+    }
+
+    .uad-link-table .uad-destination {
+        max-width: 150px;
+        font-size: 11px;
+    }
+}

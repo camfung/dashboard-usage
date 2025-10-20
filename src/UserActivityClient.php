@@ -83,6 +83,44 @@ class UserActivityClient
     }
 
     /**
+     * Get user activity by link
+     *
+     * Retrieves usage data aggregated per link/keyword for a specific user.
+     * Shows which links are most used and their costs.
+     *
+     * @param int $userId User ID to retrieve link usage for
+     * @param string|null $startDate Optional start date filter (YYYY-MM-DD)
+     * @param string|null $endDate Optional end date filter (YYYY-MM-DD)
+     * @return array Response containing message, success, and source array with link data
+     * @throws \InvalidArgumentException If user ID is invalid
+     * @throws ApiException If the API request fails
+     */
+    public function getUserActivityByLink(int $userId, ?string $startDate = null, ?string $endDate = null): array
+    {
+        if ($userId <= 0) {
+            throw new \InvalidArgumentException('User ID must be a positive integer');
+        }
+
+        $queryParams = [];
+
+        if ($startDate !== null) {
+            $queryParams['start_date'] = $startDate;
+        }
+
+        if ($endDate !== null) {
+            $queryParams['end_date'] = $endDate;
+        }
+
+        $path = "user-activity-summary/{$userId}/by-link";
+
+        if (!empty($queryParams)) {
+            $path .= '?' . http_build_query($queryParams);
+        }
+
+        return $this->makeRequest('GET', $path);
+    }
+
+    /**
      * Describe database table schema
      *
      * Returns the schema structure for a specified table including

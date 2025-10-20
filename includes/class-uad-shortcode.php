@@ -79,6 +79,13 @@ class UAD_Shortcode {
             return $this->render_error($data->get_error_message());
         }
 
+        // Fetch activity by link data
+        $link_data = $this->fetch_activity_by_link_data($user_id, $start_date, $end_date);
+
+        if (is_wp_error($link_data)) {
+            return $this->render_error($link_data->get_error_message());
+        }
+
         // Start output buffering
         ob_start();
 
@@ -135,6 +142,52 @@ class UAD_Shortcode {
                 'start_date' => $start_date,
                 'end_date' => $end_date,
                 'user_id' => $user_id,
+            ];
+
+        } catch (ApiException $e) {
+            return new WP_Error('api_exception', 'API Error: ' . $e->getMessage());
+        } catch (Exception $e) {
+            return new WP_Error('general_error', 'Error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Fetch activity by link data from API
+     *
+     * @param int $user_id User ID
+     * @param string $start_date Start date (Y-m-d)
+     * @param string $end_date End date (Y-m-d)
+     * @return array|WP_Error Link activity data or error
+     */
+    private function fetch_activity_by_link_data($user_id, $start_date, $end_date) {
+        try {
+            $client = new UserActivityClient();
+            $response = $client->getUserActivityByLink($user_id, $start_date, $end_date);
+
+            if (!$response['success']) {
+                return new WP_Error('api_error', $response['message']);
+            }
+
+            // Process data
+            $links = $response['source'];
+
+            // Calculate totals
+            $total_links = count($links);
+            $total_hits_by_link = 0;
+            $total_cost_by_link = 0;
+
+            foreach ($links as $link) {
+                $total_hits_by_link += $link['totalHits'];
+                $total_cost_by_link += abs($link['totalCost']);
+            }
+
+            return [
+                'links' => $links,
+                'summary' => [
+                    'total_links' => $total_links,
+                    'total_hits' => $total_hits_by_link,
+                    'total_cost' => $total_cost_by_link,
+                ],
             ];
 
         } catch (ApiException $e) {
