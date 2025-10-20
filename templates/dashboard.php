@@ -156,17 +156,6 @@ $summary = $data['summary'];
     <div class="uad-table-container uad-link-table-container">
         <div class="uad-table-header">
             <h3 class="uad-section-title">Link Activity</h3>
-            <div class="uad-link-summary">
-                <span class="uad-link-summary-item">
-                    <strong><?php echo number_format($link_data['summary']['total_links']); ?></strong> Links
-                </span>
-                <span class="uad-link-summary-item">
-                    <strong><?php echo number_format($link_data['summary']['total_hits']); ?></strong> Total Hits
-                </span>
-                <span class="uad-link-summary-item">
-                    <strong>$<?php echo number_format($link_data['summary']['total_cost'], 2); ?></strong> Total Cost
-                </span>
-            </div>
             <div class="uad-table-info">
                 <span class="uad-showing-entries">Showing <span id="uad-link-showing-start">1</span>-<span id="uad-link-showing-end">10</span> of <span id="uad-link-total-entries"><?php echo count($link_data['links']); ?></span> entries</span>
                 <div class="uad-per-page">
