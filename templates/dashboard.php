@@ -94,12 +94,14 @@ $summary = $data['summary'];
                                 <br><small class="uad-top-link-label"><?php echo esc_html($data['top_links']['link1']['keyword'] ?: '(deleted)'); ?></small>
                             <?php endif; ?>
                         </th>
+                        <?php if (!empty($data['top_links']['show_second_link'])) : ?>
                         <th>
                             Top Link #2
                             <?php if (!empty($data['top_links']['link2'])) : ?>
                                 <br><small class="uad-top-link-label"><?php echo esc_html($data['top_links']['link2']['keyword'] ?: '(deleted)'); ?></small>
                             <?php endif; ?>
                         </th>
+                        <?php endif; ?>
                         <th>Total Hits</th>
                         <th>Cost</th>
                         <th>Other Services</th>
@@ -112,7 +114,9 @@ $summary = $data['summary'];
                     <tr class="uad-table-row" data-row-index="<?php echo $index; ?>">
                         <td class="uad-date"><?php echo esc_html($activity['date']); ?></td>
                         <td class="uad-nonsui"><?php echo number_format($activity['nonSuiHits']); ?></td>
+                        <?php if (!empty($data['top_links']['show_second_link'])) : ?>
                         <td class="uad-sui"><?php echo number_format($activity['suiHits']); ?></td>
+                        <?php endif; ?>
                         <td class="uad-hits"><?php echo number_format($activity['totalHits']); ?></td>
                         <td class="uad-cost">
                             <?php if ($activity['hitCost'] != 0) : ?>
@@ -259,7 +263,8 @@ $summary = $data['summary'];
         topLink1: <?php echo json_encode(array_column($activities, 'nonSuiHits')); ?>,
         topLink2: <?php echo json_encode(array_column($activities, 'suiHits')); ?>,
         topLink1Name: <?php echo json_encode(!empty($data['top_links']['link1']) ? ($data['top_links']['link1']['keyword'] ?: '(deleted)') : 'N/A'); ?>,
-        topLink2Name: <?php echo json_encode(!empty($data['top_links']['link2']) ? ($data['top_links']['link2']['keyword'] ?: '(deleted)') : 'N/A'); ?>
+        topLink2Name: <?php echo json_encode(!empty($data['top_links']['link2']) ? ($data['top_links']['link2']['keyword'] ?: '(deleted)') : 'N/A'); ?>,
+        showSecondLink: <?php echo json_encode(!empty($data['top_links']['show_second_link'])); ?>
     };
 </script>
 <?php endif; ?>

@@ -51,43 +51,50 @@
             chartInstance.destroy();
         }
 
+        // Build datasets array - only add second link if it exists
+        const datasets = [
+            {
+                label: chartData.topLink1Name || 'Top Link #1',
+                data: chartData.topLink1,
+                borderColor: colors.selectiveYellow,
+                backgroundColor: link1Gradient,
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                yAxisID: 'y-hits',
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                pointBackgroundColor: colors.selectiveYellow,
+                pointBorderColor: colors.babyPowder,
+                pointBorderWidth: 2
+            }
+        ];
+
+        // Only add second dataset if showSecondLink is true
+        if (chartData.showSecondLink) {
+            datasets.push({
+                label: chartData.topLink2Name || 'Top Link #2',
+                data: chartData.topLink2,
+                borderColor: colors.bleuDeFrance,
+                backgroundColor: link2Gradient,
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                yAxisID: 'y-hits',
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                pointBackgroundColor: colors.bleuDeFrance,
+                pointBorderColor: colors.babyPowder,
+                pointBorderWidth: 2
+            });
+        }
+
         // Create chart
         chartInstance = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: chartData.labels,
-                datasets: [
-                    {
-                        label: chartData.topLink1Name || 'Top Link #1',
-                        data: chartData.topLink1,
-                        borderColor: colors.selectiveYellow,
-                        backgroundColor: link1Gradient,
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4,
-                        yAxisID: 'y-hits',
-                        pointRadius: 4,
-                        pointHoverRadius: 6,
-                        pointBackgroundColor: colors.selectiveYellow,
-                        pointBorderColor: colors.babyPowder,
-                        pointBorderWidth: 2
-                    },
-                    {
-                        label: chartData.topLink2Name || 'Top Link #2',
-                        data: chartData.topLink2,
-                        borderColor: colors.bleuDeFrance,
-                        backgroundColor: link2Gradient,
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4,
-                        yAxisID: 'y-hits',
-                        pointRadius: 4,
-                        pointHoverRadius: 6,
-                        pointBackgroundColor: colors.bleuDeFrance,
-                        pointBorderColor: colors.babyPowder,
-                        pointBorderWidth: 2
-                    }
-                ]
+                datasets: datasets
             },
             options: {
                 responsive: true,

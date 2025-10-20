@@ -120,8 +120,11 @@ class UAD_Shortcode {
             $top_links = array_slice($link_data['links'], 0, 2);
 
             // Extract top link info
-            $top_link_1 = !empty($top_links[0]) ? $top_links[0] : null;
-            $top_link_2 = !empty($top_links[1]) ? $top_links[1] : null;
+            $top_link_1 = !empty($top_links[0]) && $top_links[0]['totalHits'] > 0 ? $top_links[0] : null;
+            $top_link_2 = !empty($top_links[1]) && $top_links[1]['totalHits'] > 0 ? $top_links[1] : null;
+
+            // Determine if we should show the second column
+            $show_second_link = $top_link_2 !== null;
 
             // Calculate totals
             $total_hits = 0;
@@ -152,6 +155,7 @@ class UAD_Shortcode {
                 'top_links' => [
                     'link1' => $top_link_1,
                     'link2' => $top_link_2,
+                    'show_second_link' => $show_second_link,
                 ],
                 'start_date' => $start_date,
                 'end_date' => $end_date,
