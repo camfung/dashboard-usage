@@ -420,8 +420,16 @@
 
     /**
      * Color Randomizer - For testing different color schemes
+     * Only shows if localStorage.getItem('uad-show-color-tester') === 'true'
+     * To enable: localStorage.setItem('uad-show-color-tester', 'true')
+     * To disable: localStorage.removeItem('uad-show-color-tester')
      */
     function initColorRandomizer() {
+        // Check if color tester should be shown
+        if (localStorage.getItem('uad-show-color-tester') !== 'true') {
+            return;
+        }
+
         // Create color tester container
         const testerContainer = document.createElement('div');
         testerContainer.id = 'uad-color-tester';
