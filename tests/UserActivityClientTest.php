@@ -145,7 +145,7 @@ class UserActivityClientTest extends TestCase
         $this->assertArrayHasKey('success', $response);
         $this->assertArrayHasKey('source', $response);
         $this->assertTrue($response['success']);
-        $this->assertEquals('Usage by link retrieved', $response['message']);
+        $this->assertEquals('Usage by link per day retrieved', $response['message']);
         $this->assertIsArray($response['source']);
     }
 
@@ -159,16 +159,18 @@ class UserActivityClientTest extends TestCase
         $this->assertNotEmpty($response['source'], 'User 125 should have link activity data');
 
         $firstRecord = $response['source'][0];
+        $this->assertArrayHasKey('date', $firstRecord);
         $this->assertArrayHasKey('mid', $firstRecord);
         $this->assertArrayHasKey('keyword', $firstRecord);
         $this->assertArrayHasKey('destination', $firstRecord);
-        $this->assertArrayHasKey('totalHits', $firstRecord);
-        $this->assertArrayHasKey('totalCost', $firstRecord);
+        $this->assertArrayHasKey('hits', $firstRecord);
+        $this->assertArrayHasKey('cost', $firstRecord);
 
         // Validate data types
+        $this->assertIsString($firstRecord['date']);
         $this->assertIsInt($firstRecord['mid']);
-        $this->assertIsInt($firstRecord['totalHits']);
-        $this->assertIsNumeric($firstRecord['totalCost']);
+        $this->assertIsInt($firstRecord['hits']);
+        $this->assertIsNumeric($firstRecord['cost']);
         // keyword and destination can be null if link was deleted
     }
 
@@ -184,6 +186,12 @@ class UserActivityClientTest extends TestCase
 
         $this->assertTrue($response['success']);
         $this->assertIsArray($response['source']);
+
+        // Verify all dates are within the specified range
+        foreach ($response['source'] as $record) {
+            $this->assertGreaterThanOrEqual($startDate, $record['date']);
+            $this->assertLessThanOrEqual($endDate, $record['date']);
+        }
     }
 
     /**
@@ -197,6 +205,11 @@ class UserActivityClientTest extends TestCase
 
         $this->assertTrue($response['success']);
         $this->assertIsArray($response['source']);
+
+        // Verify all dates are on or after start date
+        foreach ($response['source'] as $record) {
+            $this->assertGreaterThanOrEqual($startDate, $record['date']);
+        }
     }
 
     /**
@@ -210,6 +223,11 @@ class UserActivityClientTest extends TestCase
 
         $this->assertTrue($response['success']);
         $this->assertIsArray($response['source']);
+
+        // Verify all dates are on or before end date
+        foreach ($response['source'] as $record) {
+            $this->assertLessThanOrEqual($endDate, $record['date']);
+        }
     }
 
     /**
@@ -243,20 +261,32 @@ class UserActivityClientTest extends TestCase
     }
 
     /**
-     * Test that results are sorted by totalHits descending
+     * Test that results are sorted by date DESC, then by hits DESC
      */
-    public function testGetActivityByLinkSortedByHits(): void
+    public function testGetActivityByLinkSorting(): void
     {
         $response = $this->client->getUserActivityByLink(self::TEST_USER_ID);
 
         if (count($response['source']) > 1) {
-            // Verify descending order by totalHits
+            // Verify descending order by date (most recent first)
             for ($i = 0; $i < count($response['source']) - 1; $i++) {
+                $currentDate = $response['source'][$i]['date'];
+                $nextDate = $response['source'][$i + 1]['date'];
+
                 $this->assertGreaterThanOrEqual(
-                    $response['source'][$i + 1]['totalHits'],
-                    $response['source'][$i]['totalHits'],
-                    'Results should be sorted by totalHits descending'
+                    $nextDate,
+                    $currentDate,
+                    'Results should be sorted by date descending'
                 );
+
+                // If dates are equal, verify hits are in descending order
+                if ($currentDate === $nextDate) {
+                    $this->assertGreaterThanOrEqual(
+                        $response['source'][$i + 1]['hits'],
+                        $response['source'][$i]['hits'],
+                        'Results with same date should be sorted by hits descending'
+                    );
+                }
             }
         }
     }
@@ -273,12 +303,13 @@ class UserActivityClientTest extends TestCase
             return $link['keyword'] === null;
         });
 
-        // If there are deleted links, verify they still have valid mid, totalHits, and totalCost
+        // If there are deleted links, verify they still have valid date, mid, hits, and cost
         foreach ($deletedLinks as $link) {
+            $this->assertIsString($link['date'], 'Deleted link should have valid date');
             $this->assertIsInt($link['mid'], 'Deleted link should have valid mid');
-            $this->assertIsInt($link['totalHits'], 'Deleted link should have valid totalHits');
-            $this->assertIsNumeric($link['totalCost'], 'Deleted link should have valid totalCost');
-            $this->assertGreaterThan(0, $link['totalHits'], 'Deleted link should have hits');
+            $this->assertIsInt($link['hits'], 'Deleted link should have valid hits');
+            $this->assertIsNumeric($link['cost'], 'Deleted link should have valid cost');
+            $this->assertGreaterThan(0, $link['hits'], 'Deleted link should have hits');
         }
     }
 
