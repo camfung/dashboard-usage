@@ -54,7 +54,7 @@
         // Build datasets array - only add second link if it exists
         const datasets = [
             {
-                label: chartData.topLink1Name || 'Top Link #1',
+                label: 'Top Link #1',
                 data: chartData.topLink1,
                 borderColor: colors.selectiveYellow,
                 backgroundColor: link1Gradient,
@@ -73,7 +73,7 @@
         // Only add second dataset if showSecondLink is true
         if (chartData.showSecondLink) {
             datasets.push({
-                label: chartData.topLink2Name || 'Top Link #2',
+                label: 'Top Link #2',
                 data: chartData.topLink2,
                 borderColor: colors.bleuDeFrance,
                 backgroundColor: link2Gradient,
@@ -129,11 +129,25 @@
                         displayColors: true,
                         callbacks: {
                             label: function(context) {
-                                let label = context.dataset.label || '';
-                                if (label) {
-                                    label += ': ';
+                                const dataIndex = context.dataIndex;
+                                const datasetIndex = context.datasetIndex;
+                                let label = '';
+
+                                // Get the keyword name for this specific day
+                                let keywordName = '';
+                                if (datasetIndex === 0 && chartData.topLink1Names) {
+                                    keywordName = chartData.topLink1Names[dataIndex] || '';
+                                } else if (datasetIndex === 1 && chartData.topLink2Names) {
+                                    keywordName = chartData.topLink2Names[dataIndex] || '';
                                 }
-                                label += context.parsed.y.toLocaleString();
+
+                                if (keywordName) {
+                                    label = keywordName + ': ';
+                                } else {
+                                    label = context.dataset.label + ': ';
+                                }
+
+                                label += context.parsed.y.toLocaleString() + ' hits';
                                 return label;
                             }
                         }

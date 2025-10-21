@@ -101,7 +101,7 @@ class UAD_Shortcode {
      * @param int $user_id User ID
      * @param string $start_date Start date (Y-m-d)
      * @param string $end_date End date (Y-m-d)
-     * @param array $link_data Link data for extracting top links
+     * @param array $link_data Link data for extracting top links per day
      * @return array|WP_Error Activity data or error
      */
     private function fetch_activity_data($user_id, $start_date, $end_date, $link_data) {
@@ -115,16 +115,15 @@ class UAD_Shortcode {
 
             // Process data
             $activities = $response['source'];
+            $by_date = $link_data['by_date'];
 
-            // Get top 2 links (already sorted by hits descending from API)
+            // Get overall top 2 links (for table header)
             $top_links = array_slice($link_data['links'], 0, 2);
-
-            // Extract top link info
             $top_link_1 = !empty($top_links[0]) && $top_links[0]['totalHits'] > 0 ? $top_links[0] : null;
             $top_link_2 = !empty($top_links[1]) && $top_links[1]['totalHits'] > 0 ? $top_links[1] : null;
 
-            // Determine if we should show the second column
-            $show_second_link = $top_link_2 !== null;
+            // Determine if we should show the second column globally
+            $show_second_link = false;
 
             // Calculate totals
             $total_hits = 0;
@@ -134,13 +133,25 @@ class UAD_Shortcode {
                 $total_hits += $record['totalHits'];
                 $total_cost += abs($record['hitCost']);
 
-                // Add top 2 link info to each day
-                $record['nonSui'] = $top_link_1 ? ($top_link_1['keyword'] ?: '(deleted)') : '';
-                $record['sui'] = $top_link_2 ? ($top_link_2['keyword'] ?: '(deleted)') : '';
-                $record['nonSuiHits'] = $top_link_1 ? $top_link_1['totalHits'] : 0;
-                $record['suiHits'] = $top_link_2 ? $top_link_2['totalHits'] : 0;
+                $date = $record['date'];
+
+                // Get top 2 links for THIS specific day
+                $day_links = isset($by_date[$date]) ? $by_date[$date] : [];
+                $day_top_1 = !empty($day_links[0]) && $day_links[0]['hits'] > 0 ? $day_links[0] : null;
+                $day_top_2 = !empty($day_links[1]) && $day_links[1]['hits'] > 0 ? $day_links[1] : null;
+
+                // Add top 2 link info for this day
+                $record['nonSui'] = $day_top_1 ? ($day_top_1['keyword'] ?: '(deleted)') : '';
+                $record['sui'] = $day_top_2 ? ($day_top_2['keyword'] ?: '(deleted)') : '';
+                $record['nonSuiHits'] = $day_top_1 ? $day_top_1['hits'] : 0;
+                $record['suiHits'] = $day_top_2 ? $day_top_2['hits'] : 0;
                 $record['otherServices'] = '';
                 $record['otherServicesTotal'] = '';
+
+                // If any day has a second link, show the column
+                if ($day_top_2 !== null) {
+                    $show_second_link = true;
+                }
             }
 
             return [
@@ -186,11 +197,52 @@ class UAD_Shortcode {
                 return new WP_Error('api_error', $response['message']);
             }
 
-            // Process data
-            $links = $response['source'];
+            // Process per-day data from API
+            $per_day_records = $response['source'];
+
+            // Group by date for finding top links per day
+            $by_date = [];
+            foreach ($per_day_records as $record) {
+                $date = $record['date'];
+                if (!isset($by_date[$date])) {
+                    $by_date[$date] = [];
+                }
+                $by_date[$date][] = $record;
+            }
+
+            // Sort each day's links by hits descending
+            foreach ($by_date as $date => &$day_links) {
+                usort($day_links, function($a, $b) {
+                    return $b['hits'] - $a['hits'];
+                });
+            }
+
+            // Aggregate totals per link (across all days) for the link activity table
+            $link_aggregates = [];
+            foreach ($per_day_records as $record) {
+                $mid = $record['mid'];
+
+                if (!isset($link_aggregates[$mid])) {
+                    $link_aggregates[$mid] = [
+                        'mid' => $mid,
+                        'keyword' => $record['keyword'],
+                        'destination' => $record['destination'],
+                        'totalHits' => 0,
+                        'totalCost' => 0,
+                    ];
+                }
+
+                $link_aggregates[$mid]['totalHits'] += $record['hits'];
+                $link_aggregates[$mid]['totalCost'] += $record['cost'];
+            }
+
+            // Convert to array and sort by total hits descending
+            $links = array_values($link_aggregates);
+            usort($links, function($a, $b) {
+                return $b['totalHits'] - $a['totalHits'];
+            });
 
             // Calculate totals
-            $total_links = count($links);
             $total_hits_by_link = 0;
             $total_cost_by_link = 0;
 
@@ -201,8 +253,9 @@ class UAD_Shortcode {
 
             return [
                 'links' => $links,
+                'by_date' => $by_date,
                 'summary' => [
-                    'total_links' => $total_links,
+                    'total_links' => count($links),
                     'total_hits' => $total_hits_by_link,
                     'total_cost' => $total_cost_by_link,
                 ],

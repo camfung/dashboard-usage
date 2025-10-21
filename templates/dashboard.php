@@ -88,19 +88,9 @@ $summary = $data['summary'];
                 <thead>
                     <tr>
                         <th>Date</th>
-                        <th>
-                            Top Link #1
-                            <?php if (!empty($data['top_links']['link1'])) : ?>
-                                <br><small class="uad-top-link-label"><?php echo esc_html($data['top_links']['link1']['keyword'] ?: '(deleted)'); ?></small>
-                            <?php endif; ?>
-                        </th>
+                        <th>Top Link #1</th>
                         <?php if (!empty($data['top_links']['show_second_link'])) : ?>
-                        <th>
-                            Top Link #2
-                            <?php if (!empty($data['top_links']['link2'])) : ?>
-                                <br><small class="uad-top-link-label"><?php echo esc_html($data['top_links']['link2']['keyword'] ?: '(deleted)'); ?></small>
-                            <?php endif; ?>
-                        </th>
+                        <th>Top Link #2</th>
                         <?php endif; ?>
                         <th>Total Hits</th>
                         <th>Cost</th>
@@ -113,9 +103,23 @@ $summary = $data['summary'];
                     <?php foreach ($activities as $index => $activity) : ?>
                     <tr class="uad-table-row" data-row-index="<?php echo $index; ?>">
                         <td class="uad-date"><?php echo esc_html($activity['date']); ?></td>
-                        <td class="uad-nonsui"><?php echo number_format($activity['nonSuiHits']); ?></td>
+                        <td class="uad-nonsui">
+                            <?php if (!empty($activity['nonSui']) && $activity['nonSuiHits'] > 0) : ?>
+                                <div><small><code><?php echo esc_html($activity['nonSui']); ?></code></small></div>
+                                <div><strong><?php echo number_format($activity['nonSuiHits']); ?></strong> hits</div>
+                            <?php else : ?>
+                                <span class="uad-no-data">-</span>
+                            <?php endif; ?>
+                        </td>
                         <?php if (!empty($data['top_links']['show_second_link'])) : ?>
-                        <td class="uad-sui"><?php echo number_format($activity['suiHits']); ?></td>
+                        <td class="uad-sui">
+                            <?php if (!empty($activity['sui']) && $activity['suiHits'] > 0) : ?>
+                                <div><small><code><?php echo esc_html($activity['sui']); ?></code></small></div>
+                                <div><strong><?php echo number_format($activity['suiHits']); ?></strong> hits</div>
+                            <?php else : ?>
+                                <span class="uad-no-data">-</span>
+                            <?php endif; ?>
+                        </td>
                         <?php endif; ?>
                         <td class="uad-hits"><?php echo number_format($activity['totalHits']); ?></td>
                         <td class="uad-cost">
@@ -259,11 +263,10 @@ $summary = $data['summary'];
     window.uadChartData = {
         labels: <?php echo json_encode(array_column($activities, 'date')); ?>,
         hits: <?php echo json_encode(array_column($activities, 'totalHits')); ?>,
-        balance: <?php echo json_encode(array_column($activities, 'balance')); ?>,
         topLink1: <?php echo json_encode(array_column($activities, 'nonSuiHits')); ?>,
         topLink2: <?php echo json_encode(array_column($activities, 'suiHits')); ?>,
-        topLink1Name: <?php echo json_encode(!empty($data['top_links']['link1']) ? ($data['top_links']['link1']['keyword'] ?: '(deleted)') : 'N/A'); ?>,
-        topLink2Name: <?php echo json_encode(!empty($data['top_links']['link2']) ? ($data['top_links']['link2']['keyword'] ?: '(deleted)') : 'N/A'); ?>,
+        topLink1Names: <?php echo json_encode(array_column($activities, 'nonSui')); ?>,
+        topLink2Names: <?php echo json_encode(array_column($activities, 'sui')); ?>,
         showSecondLink: <?php echo json_encode(!empty($data['top_links']['show_second_link'])); ?>
     };
 </script>
